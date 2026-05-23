@@ -106,10 +106,12 @@ body::before {
    ============================================================ */
 .landing {
   position: fixed; inset: 0; z-index: 200;
-  display: flex;
+  display: flex; flex-direction: column;
   background: #F4F5F7;
   transition: opacity 0.5s ease, transform 0.5s ease;
   opacity: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 [data-theme="dark"] .landing { background: #0B0B1A; }
 .landing.hidden {
@@ -170,16 +172,14 @@ body::before {
 
 .landing-body {
   position: relative; z-index: 1;
-  display: flex; align-items: flex-start; justify-content: center;
-  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%; min-height: 100%;
   padding: 40px 24px;
-  overflow-y: auto;
 }
 .landing-content {
   text-align: center;
   max-width: 740px;
   width: 100%;
-  padding-top: 40px;
 }
 .landing-brand { margin-bottom: 16px; }
 
@@ -1168,8 +1168,8 @@ body::before {
   .strip-card { width: 150px; }
   .response-question { flex-direction: column; align-items: flex-start; }
   .landing-body { padding: 24px 16px; }
-  .landing-content { padding-top: 24px; }
-  .landing-disclaimer { font-size: 11px; max-width: 100%; }
+  .landing-content { max-width: 100%; }
+  .landing-disclaimer { font-size: 11px; }
   .subjects-scroll { max-height: 220px; }
   .subj-item { font-size: 13px; padding: 7px 12px 7px 16px; }
   .semester-header { font-size: 12px; padding: 6px 12px; }
