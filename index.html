@@ -116,7 +116,6 @@ body::before {
 [data-theme="dark"] .landing { background: #0B0B1A; }
 .landing.hidden {
   opacity: 0;
-  transform: scale(1.03);
   pointer-events: none;
 }
 
@@ -181,50 +180,46 @@ body::before {
   max-width: 740px;
   width: 100%;
 }
-.landing-brand { margin-bottom: 16px; }
+.landing-brand { margin-bottom: 14px; }
 
 .landing-icon {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 68px; height: 68px;
-  border-radius: 20px;
+  width: 60px; height: 60px;
+  border-radius: 18px;
   background: linear-gradient(135deg, #6C4FF4, #3B82F6);
   color: #fff;
-  margin-bottom: 22px;
-  box-shadow: 0 8px 32px rgba(108,79,244,0.25);
-  animation: brandIn 0.6s ease both;
+  margin-bottom: 18px;
+  box-shadow: 0 6px 24px rgba(108,79,244,0.22);
 }
-[data-theme="dark"] .landing-icon { box-shadow: 0 8px 32px rgba(139,124,247,0.3); }
-.landing-icon svg { width: 34px; height: 34px; }
+[data-theme="dark"] .landing-icon { box-shadow: 0 6px 24px rgba(139,124,247,0.25); }
+.landing-icon svg { width: 30px; height: 30px; }
 
 .landing-title {
-  font-size: clamp(30px, 5vw, 46px);
+  font-size: clamp(26px, 4.5vw, 42px);
   font-weight: 800;
   color: #0B0D14;
   letter-spacing: -0.025em;
   line-height: 1.12;
-  margin-bottom: 12px;
-  animation: brandIn 0.6s ease 0.1s both;
+  margin-bottom: 10px;
 }
 [data-theme="dark"] .landing-title { color: #E8ECF4; }
 
 .landing-subtitle {
-  font-size: clamp(15px, 2vw, 17px);
+  font-size: clamp(14px, 1.8vw, 16px);
   color: #525866;
   line-height: 1.5;
-  animation: brandIn 0.6s ease 0.2s both;
 }
 [data-theme="dark"] .landing-subtitle { color: #9498B8; }
 
 .landing-prompt {
   display: flex; align-items: center; justify-content: center;
-  gap: 16px;
-  margin-bottom: 36px;
-  font-size: 12px;
+  gap: 14px;
+  margin-bottom: 28px;
+  font-size: 11px;
   color: #868C98;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   font-weight: 500;
-  animation: brandIn 0.6s ease 0.3s both;
 }
 [data-theme="dark"] .landing-prompt { color: #63668A; }
 .landing-prompt-line {
@@ -242,25 +237,24 @@ body::before {
 .landing-cards {
   display: flex;
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 12px;
   justify-content: center;
-  margin-bottom: 52px;
+  margin-bottom: 28px;
 }
 
 .landing-card {
-  display: flex; align-items: center; gap: 14px;
+  display: flex; align-items: center; gap: 12px;
   background: rgba(255,255,255,0.6);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255,255,255,0.7);
-  border-radius: 18px;
-  padding: 20px 30px;
+  border-radius: 16px;
+  padding: 16px 24px;
   cursor: pointer;
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-  min-width: 210px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  min-width: 190px;
   flex: 1 0 auto;
-  animation: cardUp 0.5s ease both;
 }
 [data-theme="dark"] .landing-card {
   background: rgba(19,19,43,0.5);
@@ -344,6 +338,7 @@ body::before {
   .landing-title { font-size: 20px; }
   .landing-subtitle { font-size: 13px; }
   .landing-disclaimer { margin: 8px auto 24px; font-size: 11px; padding: 0 4px; line-height: 1.5; }
+  .landing-shape { display: none; }
 }
 
 /* ============================================================
@@ -945,15 +940,14 @@ body::before {
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
   overflow: hidden;
-  transition: all var(--transition);
+  transition: all 0.2s ease;
 }
-.ai-card-single:hover { box-shadow: var(--shadow-md); }
 
 .acs-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
+  padding: 14px 18px;
   border-bottom: 1px solid var(--border-light);
   border-left: 4px solid;
   border-radius: 0;
@@ -961,15 +955,15 @@ body::before {
 .acs-header-left {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
 }
 .acs-dot {
-  width: 10px; height: 10px;
+  width: 9px; height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 .acs-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.2px;
@@ -986,7 +980,7 @@ body::before {
 }
 
 .acs-body {
-  padding: 20px 24px;
+  padding: 18px 20px;
 }
 .acs-body .acs-response {
   font-size: 15px;
@@ -1180,6 +1174,7 @@ body::before {
   .question-strip-header .strip-search:focus { width: 150px; }
   .ai-card-single { border-radius: 10px; }
   .acs-body { padding: 14px 16px; font-size: 14px; line-height: 1.6; }
+  .landing-shape { display: none; }
 }
 
 @media (max-width: 480px) {
