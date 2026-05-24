@@ -56,21 +56,26 @@
 }
 
 /* ============================================================
-   BASE - FIXED 100DVH ARCHITECTURE
+   BASE - THE NUCLEAR MOBILE FIX
    ============================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-body {
-  font-family: var(--font);
-  font-size: 15px;
+/* By fixing the body to the absolute edges of the viewport, 
+  we strip the browser of its ability to hide our UI behind the address bar.
+*/
+html, body {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  overscroll-behavior: none; /* Stops the whole page from bouncing on mobile */
   background: var(--bg);
   color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
   line-height: 1.55;
-  display: flex;
-  height: 100dvh; /* Dynamic viewport height ensures nothing is cut off */
-  overflow: hidden; /* Lock body scrolling, handle scrolling inside .main */
-  width: 100vw;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -82,7 +87,7 @@ body {
    LANDING
    ============================================================ */
 .landing {
-  position: fixed; inset: 0; z-index: 200;
+  position: absolute; inset: 0; z-index: 200;
   display: flex; flex-direction: column;
   background: var(--bg);
   transition: opacity 0.4s ease, visibility 0.4s;
@@ -94,23 +99,20 @@ body {
 
 .landing-bg {
   position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse 60% 50% at 5% 10%, rgba(108,79,244,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 95% 90%, rgba(59,130,246,0.04) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 50% at 5% 10%, rgba(108,79,244,0.06) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 95% 90%, rgba(59,130,246,0.04) 0%, transparent 70%);
   pointer-events: none;
 }
 [data-theme="dark"] .landing-bg {
-  background:
-    radial-gradient(ellipse 60% 50% at 5% 10%, rgba(139,124,247,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 95% 90%, rgba(59,130,246,0.05) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 50% at 5% 10%, rgba(139,124,247,0.08) 0%, transparent 70%),
+              radial-gradient(ellipse 50% 40% at 95% 90%, rgba(59,130,246,0.05) 0%, transparent 70%);
 }
 
 .landing-body {
   position: relative; z-index: 1;
   display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  width: 100%; min-height: 100dvh;
+  width: 100%; min-height: 100%;
   padding: 48px 20px 60px;
-  padding-bottom: max(60px, env(safe-area-inset-bottom));
 }
 .landing-content { text-align: center; max-width: 760px; width: 100%; }
 .landing-brand { margin-bottom: 24px; }
@@ -164,15 +166,10 @@ body {
 }
 .landing-card {
   display: flex; align-items: center; gap: 14px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 16px;
-  cursor: pointer;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px; cursor: pointer;
   transition: transform var(--t), box-shadow var(--t), border-color var(--t);
-  box-shadow: var(--shadow);
-  text-align: left;
-  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow); text-align: left; -webkit-tap-highlight-color: transparent;
 }
 .landing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--purple); }
 .landing-card:active { transform: translateY(-1px) scale(0.98); }
@@ -185,7 +182,6 @@ body {
 .landing-card-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.01em; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .landing-card-meta { font-size: 12px; color: var(--text-muted); font-weight: 500; }
 
-/* Fixed Theme Toggle Shared Component */
 .theme-btn-shared {
   display: flex; align-items: center; justify-content: center;
   width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
@@ -195,7 +191,6 @@ body {
 }
 .theme-btn-shared:hover { color: var(--purple); border-color: var(--purple); background: var(--purple-bg); }
 .theme-btn-shared svg { display: none; width: 22px; height: 22px; stroke: currentColor; }
-/* Smart logic to handle default state */
 :root:not([data-theme="dark"]) .theme-btn-shared .sun { display: block; }
 [data-theme="dark"] .theme-btn-shared .moon { display: block; }
 
@@ -206,4 +201,1117 @@ body {
   width: var(--sidebar-w); min-width: var(--sidebar-w);
   background: var(--card); border-right: 1px solid var(--border);
   display: flex; flex-direction: column;
-  height: 10
+  height: 100%; position: absolute; left: 0; top: 0; z-index: 100;
+  transform: translateX(0);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sidebar-header {
+  padding: 20px 16px; border-bottom: 1px solid var(--border-light);
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+}
+.sidebar-header .logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; color: var(--purple); letter-spacing: -0.5px; }
+.sidebar-header .logo svg { flex-shrink: 0; width: 22px; height: 22px; }
+.sidebar-header .logo span { color: var(--text); font-weight: 700; }
+
+.sidebar-nav {
+  flex-shrink: 0; padding: 16px 12px 8px;
+  display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid var(--border-light);
+}
+.sidebar-nav a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; color: var(--text-secondary);
+  text-decoration: none; cursor: pointer; transition: background var(--t), color var(--t);
+  -webkit-tap-highlight-color: transparent;
+}
+.sidebar-nav a:hover { background: var(--bg); color: var(--text); }
+.sidebar-nav a.active { background: var(--purple-bg); color: var(--purple); }
+.sidebar-nav a svg { flex-shrink: 0; opacity: 0.7; width: 18px; height: 18px; transition: opacity var(--t); }
+.sidebar-nav a.active svg { opacity: 1; }
+
+.sidebar-subjects { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; padding-top: 8px; }
+.subjects-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 16px; font-size: 11px; font-weight: 800; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; user-select: none; flex-shrink: 0;
+}
+.subjects-toggle { font-size: 9px; transition: transform 0.25s ease; }
+.subjects-toggle.collapsed { transform: rotate(-90deg); }
+.subjects-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 4px 12px 12px; -webkit-overflow-scrolling: touch; }
+.subjects-scroll.collapsed { display: none; }
+.subjects-list { display: flex; flex-direction: column; gap: 2px; }
+
+.semester-group { margin-bottom: 6px; }
+.semester-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; font-size: 13px; font-weight: 700; color: var(--text-muted);
+  cursor: pointer; user-select: none; border-radius: var(--radius-sm); transition: background var(--t), color var(--t);
+}
+.semester-header:hover { color: var(--text); background: var(--bg); }
+.sem-arrow { font-size: 9px; transition: transform 0.2s ease; }
+.sem-arrow.open { transform: rotate(90deg); }
+.semester-subjects { display: none; padding-left: 4px; margin-top: 2px; }
+.semester-subjects.open { display: block; }
+.subj-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px 10px 16px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: background var(--t), color var(--t);
+  font-size: 13.5px; color: var(--text-secondary); font-weight: 500; -webkit-tap-highlight-color: transparent;
+}
+.subj-item:hover { background: var(--purple-bg); color: var(--purple); }
+.subj-item.active { background: var(--purple); color: #fff; font-weight: 600; box-shadow: var(--shadow-md); }
+.subj-item.active .subj-count { color: rgba(255,255,255,0.8); }
+.subj-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.subj-item.active .subj-dot { border: 2px solid #fff; }
+.subj-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subj-count { font-size: 11px; color: var(--text-muted); font-weight: 700; flex-shrink: 0; background: var(--bg); padding: 2px 6px; border-radius: 10px;}
+.subj-item.active .subj-count { background: rgba(0,0,0,0.15); }
+
+.sidebar-footer {
+  flex-shrink: 0; border-top: 1px solid var(--border-light);
+  padding: 16px; background: var(--card);
+}
+.sidebar-footer-inner { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+/* ============================================================
+   MAIN FLEX WRAPPER
+   ============================================================ */
+.app-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: var(--bg);
+  min-width: 0; /* Important to prevent horizontal overflow in flex */
+}
+.mobile-top { display: none; }
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 40px 48px;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0; /* Crucial for scrolling inside a flex column */
+}
+
+.main-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 36px; flex-wrap: wrap; }
+.main-header .left h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text); }
+.main-header .left p { font-size: 15px; color: var(--text-secondary); margin-top: 8px; font-weight: 500; }
+
+/* ============================================================
+   BUTTONS & BANNERS
+   ============================================================ */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: none; border-radius: var(--radius-sm);
+  font-size: 14.5px; font-family: inherit; font-weight: 700; cursor: pointer; transition: all var(--t); white-space: nowrap; -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(0.97); }
+.btn-outline { background: var(--card); color: var(--text); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.btn-outline:hover { background: var(--bg); border-color: var(--text-muted); }
+
+.banner {
+  display: none; align-items: center; gap: 12px; padding: 14px 18px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; margin-bottom: 28px;
+}
+.banner.show { display: flex; animation: fadeIn 0.3s ease; }
+.banner.warning { background: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+[data-theme="dark"] .banner.warning { background: rgba(245,158,11,0.1); color: #FCD34D; border-color: rgba(245,158,11,0.2); }
+
+/* ============================================================
+   CUSTOM INPUT
+   ============================================================ */
+.custom-section { margin-bottom: 36px; }
+.custom-input-wrap {
+  position: relative; border: 1px solid var(--border); border-radius: var(--radius); transition: border-color var(--t), box-shadow var(--t);
+  background: var(--card); box-shadow: var(--shadow);
+}
+.custom-input-wrap:focus-within { border-color: var(--purple); box-shadow: var(--shadow-glow); }
+.custom-input-wrap textarea {
+  width: 100%; border: none; outline: none; padding: 18px 140px 18px 24px;
+  font-family: inherit; font-size: 15.5px; line-height: 1.6; color: var(--text); background: transparent; resize: none;
+  min-height: 60px; max-height: 160px; border-radius: var(--radius);
+}
+.custom-input-wrap textarea::placeholder { color: var(--text-muted); font-weight: 500; }
+.custom-input-footer { display: flex; align-items: center; justify-content: space-between; padding: 0 24px 14px; }
+.char-count { font-size: 13px; color: var(--text-muted); font-weight: 600; transition: color var(--t); }
+.char-count.over { color: var(--ai3); }
+.custom-input-wrap .submit-btn {
+  position: absolute; bottom: 14px; right: 14px; padding: 10px 22px; font-size: 14px; font-weight: 700;
+  border: none; border-radius: 10px; background: var(--purple); color: #fff; cursor: pointer; transition: all var(--t);
+  font-family: inherit; -webkit-tap-highlight-color: transparent; box-shadow: 0 4px 12px rgba(108,79,244,0.3);
+}
+.custom-input-wrap .submit-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-2px); }
+.custom-input-wrap .submit-btn:active:not(:disabled) { transform: scale(0.96); }
+.custom-input-wrap .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; transform: none; }
+
+.custom-slot-limit {
+  display: none; padding: 16px 24px; background: var(--purple-bg); border: 1px solid rgba(108,79,244,0.2);
+  border-radius: var(--radius-sm); font-size: 14.5px; color: var(--purple); font-weight: 600; gap: 14px; align-items: center;
+}
+.custom-slot-limit.show { display: flex; animation: fadeIn 0.3s ease; }
+
+/* ============================================================
+   QUESTION STRIP (Horizontal Carousel)
+   ============================================================ */
+.question-strip-wrap { margin-bottom: 36px; }
+.question-strip-header { margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+.qsh-top { display: flex; align-items: center; gap: 14px; }
+.qsh-top h3 { font-size: 14px; font-weight: 800; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.8px; }
+.qsh-top .qsh-count { font-size: 13px; color: var(--text-muted); font-weight: 700; background: var(--border-light); padding: 4px 10px; border-radius: 12px; }
+.qsh-bottom { display: flex; gap: 10px; align-items: center; }
+
+.strip-scroll-btn {
+  width: 38px; height: 38px; border: 1px solid var(--border); border-radius: 50%; background: var(--card); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-secondary); transition: all var(--t);
+  flex-shrink: 0; box-shadow: var(--shadow);
+}
+.strip-scroll-btn:hover { background: var(--bg); color: var(--text); border-color: var(--text-muted); }
+.strip-scroll-btn:active { transform: scale(0.92); }
+
+.strip-search {
+  border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px 10px 36px; font-size: 14px; background: var(--card);
+  color: var(--text); width: 200px; outline: none; transition: all var(--t);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 12px center; box-shadow: var(--shadow); font-family: inherit; font-weight: 500;
+}
+.strip-search:focus { border-color: var(--purple); box-shadow: var(--shadow-glow); width: 240px; }
+.strip-search::placeholder { color: var(--text-muted); font-weight: 500; }
+
+.strip-bm-btn {
+  border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; font-size: 16px; background: var(--card);
+  color: var(--text-muted); cursor: pointer; transition: all var(--t); box-shadow: var(--shadow); user-select: none;
+}
+.strip-bm-btn:hover { border-color: var(--purple); color: var(--purple); }
+.strip-bm-btn.active { border-color: #F59E0B; color: #F59E0B; background: rgba(245,158,11,0.08); }
+
+.question-strip {
+  display: flex; gap: 14px; overflow-x: auto; padding: 4px 4px 20px;
+  scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scroll-snap-type: x mandatory;
+}
+.question-strip::-webkit-scrollbar { height: 6px; }
+.question-strip::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px; }
+
+.strip-card {
+  flex-shrink: 0; width: 220px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 16px 20px; cursor: pointer; transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: var(--shadow);
+  user-select: none; -webkit-tap-highlight-color: transparent; scroll-snap-align: start; display: flex; flex-direction: column;
+}
+.strip-card:hover { border-color: var(--purple-light); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+.strip-card:active { transform: scale(0.97); }
+.strip-card.active { border-color: var(--purple); box-shadow: var(--shadow-glow); }
+.strip-card .sq-color-bar { height: 4px; border-radius: 2px; margin-bottom: 12px; width: 36px; }
+.strip-card .sq-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.strip-card .sq-number { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.strip-card .sq-bookmark { font-size: 18px; cursor: pointer; line-height: 1; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.strip-card .sq-bookmark:active { transform: scale(1.4); }
+.strip-card .sq-bookmark.bm-on { color: #F59E0B; }
+.strip-card .sq-bookmark.bm-off { color: var(--text-muted); opacity: 0.5; }
+.strip-card .sq-text {
+  font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; font-weight: 600;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+.strip-more {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  padding: 0 28px; font-size: 14px; font-weight: 700; color: var(--text-muted); white-space: nowrap; scroll-snap-align: center;
+}
+
+/* ============================================================
+   RESPONSE SECTION
+   ============================================================ */
+.response-section { display: none; margin-top: 16px; }
+.response-section.show { display: block; animation: fadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.response-question {
+  display: flex; align-items: flex-start; gap: 16px; margin-bottom: 24px; padding: 20px 24px;
+  background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow);
+  border: 1px solid var(--border); border-left: 5px solid var(--purple);
+}
+.response-question .rq-label {
+  font-size: 12px; font-weight: 800; padding: 6px 12px; border-radius: 20px;
+  background: var(--purple-bg); color: var(--purple); text-transform: uppercase; letter-spacing: 0.8px; flex-shrink: 0; margin-top: 2px;
+}
+.response-question .rq-text { font-size: 16.5px; font-weight: 700; line-height: 1.6; flex: 1; color: var(--text); }
+
+/* ============================================================
+   MODEL PICKER
+   ============================================================ */
+.model-picker { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+.model-picker-label { font-size: 13px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+.model-dropdown { position: relative; min-width: 220px; }
+.md-selected {
+  display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 14.5px; font-weight: 700;
+  cursor: pointer; transition: all var(--t); font-family: inherit; text-align: left; box-shadow: var(--shadow);
+}
+.md-selected:hover { border-color: var(--purple-light); background: var(--card-hover); }
+.md-selected.open { border-color: var(--purple); box-shadow: var(--shadow-glow); }
+.md-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.md-name { font-weight: 600; color: var(--text-muted); font-size: 12px; margin-left: auto; }
+.md-chevron { flex-shrink: 0; transition: transform 0.2s ease; color: var(--text-muted); }
+.md-selected.open .md-chevron { transform: rotate(180deg); color: var(--purple); }
+.md-menu {
+  display: none; position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+  z-index: 50; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); overflow: hidden;
+  animation: dropIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.md-menu.open { display: block; }
+@keyframes dropIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.md-option {
+  display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 16px; border: none; background: transparent; color: var(--text-secondary);
+  font-size: 14.5px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; font-family: inherit; text-align: left;
+}
+.md-option:hover { background: var(--purple-bg); color: var(--purple); }
+.md-option.active { background: var(--purple); color: #fff; }
+.md-option.active .md-name { color: rgba(255,255,255,0.8); }
+.md-option .mo-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.md-option.active .mo-dot { border: 2px solid #fff; }
+.md-option .mo-name { font-weight: 600; color: var(--text-muted); font-size: 12px; margin-left: auto; }
+
+/* ============================================================
+   AI CARD
+   ============================================================ */
+.ai-card-wrap { margin-bottom: 32px; }
+.ai-card-single { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-md); border: 1px solid var(--border); overflow: hidden; }
+.acs-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid var(--border-light); border-left: 5px solid; background: var(--card-hover); }
+.acs-header-left { display: flex; align-items: center; gap: 12px; }
+.acs-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.acs-label { font-size: 13.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.acs-header-right { display: flex; align-items: center; gap: 8px; }
+.acs-tokens { font-size: 12.5px; color: var(--text-muted); font-weight: 700; }
+.acs-body { padding: 24px; position: relative; }
+
+.acs-response-wrap { position: relative; transition: max-height 0.3s ease; }
+.acs-response { font-size: 16px; line-height: 1.7; color: var(--text); }
+.acs-response p { margin-bottom: 14px; }
+.acs-response p:last-child { margin-bottom: 0; }
+.acs-response ul { margin: 10px 0 14px; padding-left: 24px; }
+.acs-response li { margin-bottom: 6px; }
+.acs-response strong { font-weight: 700; color: var(--text); }
+.acs-response-wrap.collapsed .acs-response { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.acs-loading { display: flex; flex-direction: column; gap: 14px; }
+.acs-skeleton { height: 16px; border-radius: 8px; width: 100%; background: linear-gradient(90deg, var(--border) 25%, var(--border-light) 50%, var(--border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; }
+.acs-skeleton:last-child { width: 65%; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+.acs-error { font-size: 15px; color: var(--text-secondary); line-height: 1.6; font-weight: 600; }
+.acs-error .retry-btn { background: none; border: none; color: var(--purple); font-weight: 800; cursor: pointer; font-family: inherit; font-size: 15px; padding: 0; text-decoration: underline; text-underline-offset: 3px; -webkit-tap-highlight-color: transparent; }
+.acs-footer { padding: 0 24px 20px; display: flex; justify-content: flex-start; }
+.acs-toggle-btn { background: var(--bg); border: 1px solid var(--border); font-size: 14px; font-weight: 800; color: var(--text-secondary); cursor: pointer; font-family: inherit; padding: 10px 20px; border-radius: 10px; transition: all var(--t); box-shadow: var(--shadow); -webkit-tap-highlight-color: transparent; }
+.acs-toggle-btn:hover { color: var(--purple); border-color: var(--purple); box-shadow: var(--shadow-glow); }
+.acs-toggle-btn:active { transform: scale(0.96); }
+
+.response-disclaimer { text-align: center; font-size: 13px; color: var(--text-muted); line-height: 1.6; max-width: 600px; margin: 32px auto 0; font-weight: 600; padding: 0 16px; }
+
+/* ============================================================
+   VIEWS & EMPTY STATES
+   ============================================================ */
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.3s ease; }
+.about-content { max-width: 640px; }
+.about-content h2 { font-size: 30px; font-weight: 800; margin-bottom: 10px; letter-spacing: -0.5px; }
+.about-content .about-sub { font-size: 16px; color: var(--text-secondary); margin-bottom: 36px; font-weight: 600; }
+.about-content section { margin-bottom: 32px; background: var(--card); padding: 28px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); }
+.about-content section h3 { font-size: 14px; font-weight: 800; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text); }
+.about-content section p { font-size: 16px; color: var(--text-secondary); line-height: 1.7; font-weight: 500; }
+.about-content a { color: var(--purple); font-weight: 700; text-decoration: none; }
+.about-content a:hover { text-decoration: underline; }
+
+.empty-state { text-align: center; padding: 48px 20px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.empty-state .empty-icon { font-size: 44px; margin-bottom: 18px; opacity: 0.4; }
+.empty-state h3 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+.empty-state p { font-size: 15px; color: var(--text-muted); font-weight: 600; }
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px) scale(0.9);
+  background: var(--text); color: var(--bg); padding: 14px 28px; border-radius: 14px; font-size: 15px; font-weight: 700;
+  opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: none; z-index: 99999;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25); text-align: center; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+
+/* ============================================================
+   MOBILE (THE FIXED LAYOUT ARCHITECTURE)
+   ============================================================ */
+.sidebar-close { display: none; }
+.backdrop { display: none; }
+
+@media (max-width: 768px) {
+  
+  /* Reset layout to rely purely on flex columns for mobile */
+  .sidebar {
+    width: 280px; min-width: 280px;
+    box-shadow: 12px 0 40px rgba(0,0,0,0.2);
+    transform: translateX(-100%);
+  }
+  .sidebar.open { transform: translateX(0); }
+  
+  .sidebar-close {
+    display: flex; align-items: center; justify-content: center;
+    background: var(--bg); border: none; color: var(--text-secondary); cursor: pointer;
+    font-size: 20px; width: 36px; height: 36px; border-radius: 10px; font-weight: bold;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .app-wrapper {
+    flex-direction: column; /* Stack top bar and content */
+  }
+
+  .main {
+    margin-left: 0; width: 100vw;
+  }
+
+  /* Sticky Top Bar becomes a normal flex child */
+  .mobile-top {
+    display: flex;
+    flex-shrink: 0;
+    height: var(--mobile-bar);
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    align-items: center; justify-content: space-between; 
+    padding: 0 16px;
+    /* Removed sticky, removed absolute. It just lives at the top of the flex column. */
+  }
+  
+  .mobile-top-left { display: flex; align-items: center; gap: 14px; flex: 1; }
+  .hamburger {
+    display: flex; align-items: center; justify-content: center;
+    background: none; border: none; color: var(--text); cursor: pointer;
+    width: 40px; height: 40px; border-radius: 10px; margin-left: -8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mobile-logo { display: block; font-size: 18px; font-weight: 800; color: var(--purple); letter-spacing: -0.4px; }
+  
+  .main-content { 
+    padding: 24px 16px; 
+    /* Adding huge bottom padding ensures you can scroll PAST the bottom nav bar */
+    padding-bottom: 120px; 
+  }
+
+  .backdrop {
+    display: block; position: absolute; inset: 0; z-index: 95;
+    background: rgba(0,0,0,0.5); opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .backdrop.show { opacity: 1; pointer-events: auto; }
+
+  /* UI Adjustments */
+  .main-header { margin-bottom: 24px; gap: 14px; flex-direction: column; }
+  .main-header .left h1 { font-size: 26px; }
+  .main-header .btn { align-self: flex-start; }
+  
+  .question-strip-header { flex-direction: column; align-items: flex-start; }
+  .qsh-bottom { width: 100%; justify-content: space-between; }
+  .strip-search { flex: 1; width: auto; }
+  .strip-search:focus { width: auto; }
+  
+  .response-question { padding: 16px; gap: 14px; flex-direction: column; }
+  .response-question .rq-text { font-size: 15.5px; }
+  .landing-body { padding: 32px 16px 120px; }
+  .landing-cards { grid-template-columns: 1fr; }
+  .landing-card { padding: 14px 16px; }
+  .acs-body { padding: 18px; font-size: 15.5px; }
+}
+
+@media (max-width: 480px) {
+  .landing-title { font-size: 28px; }
+  .landing-card-icon { width: 44px; height: 44px; font-size: 16px; }
+  .strip-card { width: 180px; padding: 14px 16px; }
+  .custom-input-wrap textarea { font-size: 15px; padding: 16px 110px 16px 16px; }
+  .custom-input-wrap .submit-btn { padding: 8px 16px; font-size: 13.5px; right: 10px; bottom: 10px; }
+  .acs-footer { padding: 0 18px 18px; }
+}
+</style>
+</head>
+<body>
+
+<div class="landing" id="landing">
+  <div class="landing-bg"></div>
+  <div class="landing-body">
+    <div class="landing-content">
+      <div class="landing-brand">
+        <div class="landing-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </div>
+        <h1 class="landing-title">Omni-Answer Explorer</h1>
+        <p class="landing-subtitle">Multi-perspective AI answers for medical exam preparation</p>
+      </div>
+      <div class="landing-disclaimer">⚠ Answers are AI-generated and may differ from expected exam answers. For study aid only — always cross-check with your curriculum.</div>
+      <div class="landing-prompt">
+        <span class="landing-prompt-line"></span>
+        <span>Select a semester to begin</span>
+        <span class="landing-prompt-line"></span>
+      </div>
+      <div class="landing-cards" id="landingCards"></div>
+      
+      <button class="theme-btn-shared" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.72" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.72" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="app-wrapper">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        Omni<span>-Answer</span>
+      </div>
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <a class="active" data-view="questions" onclick="switchView('questions')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        Questions
+      </a>
+      <a data-view="current" onclick="switchView('current')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Current Question
+      </a>
+      <a data-view="reset" onclick="resetData()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Reset Data
+      </a>
+      <a data-view="about" onclick="switchView('about')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        About
+      </a>
+    </nav>
+    
+    <div class="sidebar-subjects" id="sidebarSubjects">
+      <div class="subjects-header" onclick="toggleAllSemesters()">
+        <span>Subjects</span>
+        <span class="subjects-toggle" id="subjectsToggle">▼</span>
+      </div>
+      <div class="subjects-scroll" id="subjectsScroll">
+        <div class="subjects-list" id="subjectsList"></div>
+      </div>
+    </div>
+    
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-inner">
+        <span>Omni-Answer v2.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    
+    <div class="mobile-top">
+      <div class="mobile-top-left">
+        <button class="hamburger" onclick="toggleSidebar()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="mobile-logo">Omni-Answer</div>
+      </div>
+      
+      <button class="theme-btn-shared" onclick="toggleTheme()" title="Toggle dark mode">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.72" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.72" y2="4.22"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+    
+    <div class="backdrop" id="backdrop" onclick="toggleSidebar()"></div>
+
+    <div class="main-content" id="mainContent">
+      
+      <div class="view active" id="viewQuestions">
+        <div class="main-header">
+          <div class="left">
+            <h1>Questions</h1>
+            <p id="subtitleText">Select a question or type your own.</p>
+          </div>
+          <button class="btn btn-outline" onclick="resetData()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Reset
+          </button>
+        </div>
+
+        <div class="banner warning" id="apiKeyBanner">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Custom questions disabled — API key not configured.</span>
+        </div>
+
+        <div class="custom-section" id="customSection">
+          <div class="custom-input-wrap" id="customInputWrap">
+            <textarea id="customInput" rows="1" placeholder="Type a custom medical question…" maxlength="300" oninput="onCustomInput()"></textarea>
+            <div class="custom-input-footer">
+              <span class="char-count" id="charCount">0 / 300</span>
+            </div>
+            <button class="submit-btn" id="submitBtn" disabled onclick="submitCustom()">Ask AI →</button>
+          </div>
+          <div class="custom-slot-limit" id="slotLimit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>You've used all custom question slots for this session. Please explore the preset questions below.</span>
+          </div>
+        </div>
+
+        <div class="question-strip-wrap">
+          <div class="question-strip-header">
+            <div class="qsh-top">
+              <h3>Preset Questions</h3>
+              <span class="qsh-count" id="qshCount"></span>
+            </div>
+            <div class="qsh-bottom">
+              <button class="strip-bm-btn" id="stripBmBtn" onclick="toggleBookmarkFilter()" title="Show bookmarked only">☆</button>
+              <input class="strip-search" id="stripSearch" placeholder="Search by text or #…" spellcheck="false">
+              <button class="strip-scroll-btn" onclick="scrollStrip(-1)">‹</button>
+              <button class="strip-scroll-btn" onclick="scrollStrip(1)">›</button>
+            </div>
+          </div>
+          <div class="question-strip" id="questionStrip"></div>
+        </div>
+
+        <div class="response-section" id="responseSection">
+          <div class="response-question" id="responseQuestion">
+            <span class="rq-label" id="rqLabel">Preset</span>
+            <span class="rq-text" id="rqText"></span>
+          </div>
+          
+          <div class="model-picker" id="modelPicker">
+            <span class="model-picker-label">Perspective</span>
+            <div class="model-dropdown" id="modelDropdown">
+              <button class="md-selected" id="mdSelected" onclick="toggleDropdown()">
+                <span class="md-dot" id="mdDot"></span>
+                <span class="md-label" id="mdLabel">AI 2</span>
+                <span class="md-name" id="mdName">compound-mini</span>
+                <svg class="md-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="md-menu" id="mdMenu"></div>
+            </div>
+          </div>
+
+          <div class="ai-card-wrap" id="aiCardWrap"></div>
+          <div class="response-disclaimer">Answers are AI-generated — always cross-check with your curriculum and official materials before your exam.</div>
+        </div>
+      </div>
+
+      <div class="view" id="viewAbout">
+        <div class="about-content">
+          <h2>Omni-Answer Explorer</h2>
+          <p class="about-sub">A modern, multi-perspective AI study companion.</p>
+          <section>
+            <h3>Overview</h3>
+            <p>Omni-Answer Explorer turns your static question bank into a fluid, interactive study experience. Compare different AI models ranging from dense pathophysiological reasoning to simple, memorable student-focused explanations.</p>
+          </section>
+          <section>
+            <h3>Privacy & Storage</h3>
+            <p>All preset questions, cached responses, and bookmarks are stored completely locally in your browser. Custom questions are transmitted securely to the AI API endpoints and are never logged or stored on our servers.</p>
+          </section>
+          <section>
+            <h3>Stay Connected</h3>
+            <p>Follow for updates, new features, and queries — <a href="#" id="instaLink" target="_blank">@omnianswer</a></p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   INJECTED DATA
+   ============================================================ */
+const INJECTED_QUESTIONS = typeof INJECT_QUESTIONS !== 'undefined' ? INJECT_QUESTIONS : [];
+const INJECTED_SUBJECTS  = typeof INJECT_SUBJECTS !== 'undefined' ? INJECT_SUBJECTS : [];
+const INJECTED_CACHE     = typeof INJECT_CACHE !== 'undefined' ? INJECT_CACHE : {};
+const INJECTED_CONFIG    = typeof INJECT_CONFIG !== 'undefined' ? INJECT_CONFIG : {};
+
+/* ============================================================
+   CONFIG
+   ============================================================ */
+const CONFIG = Object.assign({
+  groqApiKey: "",
+  models: {
+    ai1: "llama-3.3-70b-versatile",
+    ai2: "groq/compound-mini",
+    ai3: "llama-3.1-8b-instant",
+    ai4: "meta-llama/llama-4-scout-17b-16e-instruct"
+  },
+  maxTokens: 350,
+  temperature: 0.7,
+  maxCustomQuestionsPerSession: 3,
+  cooldownSeconds: 10
+}, INJECTED_CONFIG || {});
+
+const SYSTEM_PROMPTS = {
+  ai1: "You are answering a medical exam question. Use clinical reasoning and pathophysiology. Be precise and structured. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**.",
+  ai2: "You are answering a medical exam question. Focus on helping the student remember the key fact. Use simple language and a memorable framing where helpful. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**.",
+  ai3: "You are answering a medical exam question. Highlight what students commonly get wrong about this topic and correct those misconceptions. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**.",
+  ai4: "You are answering a medical exam question. Explain like a teacher preparing a student for an MCQ exam. Focus on the single most important exam fact. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**."
+};
+
+const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
+const AI_MODELS = [
+  { id: "ai1", label: "Pathology Pro", name: "llama-3.3-70b", color: "#3B82F6" },
+  { id: "ai2", label: "Memory Mentor", name: "compound-mini", color: "#10B981" },
+  { id: "ai3", label: "Pitfall Guide", name: "llama-3.1-8b",  color: "#EF4444" },
+  { id: "ai4", label: "Exam Focus",    name: "llama-4-scout", color: "#F59E0B" }
+];
+
+const SUBJECT_COLORS = [
+  '#6C4FF4','#3B82F6','#10B981','#F59E0B','#EF4444',
+  '#8B5CF6','#06B6D4','#84CC16','#EC4899','#F97316',
+  '#14B8A6','#6366F1','#A855F7','#22C55E','#EAB308','#DC2626'
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const AppState = {
+  questions: Array.isArray(INJECTED_QUESTIONS) ? INJECTED_QUESTIONS : [],
+  subjects: Array.isArray(INJECTED_SUBJECTS) ? INJECTED_SUBJECTS : [],
+  cache: (typeof INJECTED_CACHE === 'object' && INJECTED_CACHE !== null) ? INJECTED_CACHE : {},
+  openSemesters: {},
+  activeSubject: null,
+  activeQuestion: null,
+  activeSource: null,
+  response: null,
+  responseStatus: null,
+  responseError: null,
+  isLoading: false,
+  showFull: false,
+  selectedModel: "ai2",
+  customCount: 0,
+  cooldownRemaining: 0,
+  showBookmarked: false,
+  stripQuery: '',
+  _searchTimer: null
+};
+
+/* ============================================================
+   HELPERS & CACHE
+   ============================================================ */
+function escapeHtml(str) { const d = document.createElement('div'); d.textContent = String(str); return d.innerHTML; }
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function mdToHtml(text) {
+  if (!text) return '';
+  let h = escapeHtml(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  h = h.replace(/^(\d+)[.)]\s+(.*)$/gm, '<li>$2</li>'); 
+  h = h.replace(/^[-*]\s+(.*)$/gm, '<li>$1</li>');
+  h = h.replace(/((?:<li>.*?<\/li>\n?)+)/g, '<ul>$1</ul>');
+  h = h.replace(/\n\n/g, '</p><p>');
+  h = h.replace(/\n/g, '<br>');
+  if (!h.startsWith('<')) h = '<p>' + h + '</p>';
+  return h;
+}
+
+function getSubjectColor(subjectName) {
+  const idx = AppState.subjects.findIndex(s => s.subject === subjectName);
+  return SUBJECT_COLORS[Math.abs(idx) % SUBJECT_COLORS.length] || SUBJECT_COLORS[0];
+}
+
+function safeStorageGet(key, def) { try { return JSON.parse(localStorage.getItem(key)) || def; } catch { return def; } }
+function safeStorageSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) { console.warn("Storage full", e); } }
+
+function getBookmarkKey(q) { return q.subject + '::' + q.semester + '::' + q.text; }
+function isBookmarked(q) { return safeStorageGet('omni_bks', []).includes(getBookmarkKey(q)); }
+function toggleBookmarkByKey(key) {
+  const bks = safeStorageGet('omni_bks', []);
+  const idx = bks.indexOf(key);
+  if (idx >= 0) bks.splice(idx, 1); else bks.push(key);
+  safeStorageSet('omni_bks', bks);
+  renderStrip();
+}
+
+function markRL(id) { const m = safeStorageGet('omni_rl', {}); m[id] = Date.now(); safeStorageSet('omni_rl', m); }
+function clearRL(id) { const m = safeStorageGet('omni_rl', {}); delete m[id]; safeStorageSet('omni_rl', m); }
+function isRL(id) {
+  const m = safeStorageGet('omni_rl', {}), ts = m[id];
+  if (!ts) return false;
+  if (Date.now() - ts > 60000) { delete m[id]; safeStorageSet('omni_rl', m); return false; }
+  return true;
+}
+function findWorkingModel() { return AI_MODELS.find(m => !isRL(m.id))?.id || AI_MODELS[0].id; }
+
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('omni_theme');
+  if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  const savedModel = localStorage.getItem('omni_model');
+  if (savedModel && AI_MODELS.find(m => m.id === savedModel)) AppState.selectedModel = savedModel;
+  if (isRL(AppState.selectedModel)) { AppState.selectedModel = findWorkingModel(); localStorage.setItem('omni_model', AppState.selectedModel); }
+
+  renderLanding();
+  renderModelPicker();
+  checkApiKey();
+  renderSubjects();
+  renderStrip();
+
+  document.getElementById('stripSearch').addEventListener('input', (e) => {
+    clearTimeout(AppState._searchTimer);
+    AppState._searchTimer = setTimeout(() => { AppState.stripQuery = e.target.value.trim().toLowerCase(); renderStrip(); }, 150);
+  });
+});
+
+function toggleTheme() {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('omni_theme', next);
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('backdrop').classList.toggle('show');
+}
+
+/* ============================================================
+   LANDING
+   ============================================================ */
+function renderLanding() {
+  const container = document.getElementById('landingCards');
+  const semesters = [...new Set(AppState.subjects.map(s => s.semester))];
+  if (!semesters.length) { document.getElementById('landing').classList.add('hidden'); return; }
+  
+  container.innerHTML = semesters.map((sem, i) => {
+    const subs = AppState.subjects.filter(s => s.semester === sem);
+    const totalQ = subs.reduce((a, s) => a + s.count, 0);
+    const semNum = sem.match(/\d+/) ? sem.match(/\d+/)[0] : sem.charAt(0);
+    
+    return `<div class="landing-card" onclick="selectSemester('${escapeHtml(sem)}')">
+      <div class="landing-card-icon" style="background:${SUBJECT_COLORS[i % SUBJECT_COLORS.length]}">${escapeHtml(semNum)}</div>
+      <div class="landing-card-info">
+        <div class="landing-card-name">${escapeHtml(sem)}</div>
+        <div class="landing-card-meta">${subs.length} subject${subs.length > 1 ? 's' : ''} · ${totalQ} Qs</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectSemester(semester) {
+  const subs = AppState.subjects.filter(s => s.semester === semester);
+  if (!subs || !subs.length) return;
+  selectSubject(subs[0].id);
+  document.getElementById('landing').classList.add('hidden');
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+}
+
+/* ============================================================
+   MODEL PICKER
+   ============================================================ */
+function renderModelPicker() {
+  const dot = document.getElementById('mdDot'), label = document.getElementById('mdLabel'), name = document.getElementById('mdName');
+  const model = AI_MODELS.find(m => m.id === AppState.selectedModel) || AI_MODELS[1];
+  
+  dot.style.background = model.color;
+  label.textContent = model.label; label.style.color = model.color;
+  name.textContent = model.name;
+  
+  document.getElementById('mdMenu').innerHTML = AI_MODELS.map(m => `
+    <button class="md-option ${AppState.selectedModel === m.id ? 'active' : ''}" onclick="selectModel('${m.id}')">
+      <span class="mo-dot" style="background:${m.color}"></span>
+      ${m.label}
+      <span class="mo-name">${m.name}</span>
+    </button>`).join('');
+}
+
+function selectModel(id) {
+  if (AppState.isLoading) return;
+  AppState.selectedModel = id; localStorage.setItem('omni_model', id);
+  renderModelPicker(); closeDropdown();
+  
+  if (AppState.activeQuestion) {
+    if (AppState.activeSource === 'preset') {
+      const idx = getFilteredQuestions().indexOf(AppState.activeQuestion);
+      if (idx >= 0) selectQuestion(idx);
+    } else retryAI();
+  }
+}
+
+function toggleDropdown() { document.getElementById('mdMenu').classList.toggle('open'); document.getElementById('mdSelected').classList.toggle('open'); }
+function closeDropdown() { document.getElementById('mdMenu').classList.remove('open'); document.getElementById('mdSelected').classList.remove('open'); }
+document.addEventListener('click', e => { const dd = document.getElementById('modelDropdown'); if (dd && !dd.contains(e.target)) closeDropdown(); });
+
+/* ============================================================
+   SUBJECTS
+   ============================================================ */
+function getFilteredQuestions() {
+  if (!AppState.activeSubject) return AppState.questions;
+  return AppState.questions.filter(q => q.subject === AppState.activeSubject.subject && q.semester === AppState.activeSubject.semester);
+}
+
+function renderSubjects() {
+  const list = document.getElementById('subjectsList');
+  if (!AppState.subjects.length) { document.getElementById('sidebarSubjects').style.display = 'none'; return; }
+  
+  const groups = {};
+  AppState.subjects.forEach(s => { (groups[s.semester] = groups[s.semester] || []).push(s); });
+  if (AppState.activeSubject && !AppState.openSemesters[AppState.activeSubject.semester]) AppState.openSemesters[AppState.activeSubject.semester] = true;
+  
+  list.innerHTML = Object.keys(groups).map(sem => {
+    const subs = groups[sem], isOpen = AppState.openSemesters[sem];
+    return `<div class="semester-group">
+      <div class="semester-header" onclick="toggleSemester('${escapeHtml(sem)}')">
+        <span class="sem-arrow ${isOpen ? 'open' : ''}">▶</span>${escapeHtml(sem)}
+      </div>
+      <div class="semester-subjects ${isOpen ? 'open' : ''}">
+        ${subs.map(s => {
+          const active = AppState.activeSubject && s.id === AppState.activeSubject.id;
+          return `<div class="subj-item${active ? ' active' : ''}" onclick="selectSubject('${escapeHtml(s.id)}')">
+            <span class="subj-dot" style="background:${active ? 'transparent' : getSubjectColor(s.subject)}"></span>
+            <span class="subj-name">${escapeHtml(s.subject)}</span>
+            <span class="subj-count">${s.count}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSemester(name) { AppState.openSemesters[name] = !AppState.openSemesters[name]; renderSubjects(); }
+function toggleAllSemesters() { AppState.subjects.forEach(s => AppState.openSemesters[s.semester] = true); renderSubjects(); }
+
+function selectSubject(id) {
+  const subj = AppState.subjects.find(s => s.id === id);
+  if (!subj) return;
+  AppState.activeSubject = subj; AppState.openSemesters[subj.semester] = true;
+  
+  AppState.activeQuestion = null; AppState.response = null; AppState.responseStatus = null; AppState.showFull = false;
+  document.getElementById('responseSection').classList.remove('show');
+  
+  checkApiKey(); renderSubjects(); renderStrip();
+  
+  const filtered = getFilteredQuestions();
+  if (filtered.length > 0) selectQuestion(0);
+  
+  document.getElementById('subtitleText').textContent = filtered.length ? `${subj.subject} — ${filtered.length} questions` : `${subj.subject} — Empty`;
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+/* ============================================================
+   QUESTION STRIP
+   ============================================================ */
+const STRIP_LIMIT = 60; 
+
+function renderStrip() {
+  const strip = document.getElementById('questionStrip'), all = getFilteredQuestions(), query = AppState.stripQuery;
+  
+  let filtered = all.filter((q, i) => {
+    if (!query) return true;
+    const numMatch = /^\d+$/.test(query) && ('q' + (i + 1)).includes(query);
+    return numMatch || q.text.toLowerCase().includes(query);
+  });
+  if (AppState.showBookmarked) filtered = filtered.filter(q => isBookmarked(q));
+
+  const countEl = document.getElementById('qshCount');
+  if (countEl) countEl.textContent = filtered.length === all.length ? `${all.length} Qs` : `${filtered.length} / ${all.length}`;
+
+  if (all.length === 0) { strip.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><h3>No questions found</h3><p>Please select a different subject.</p></div>'; return; }
+  if (filtered.length === 0) {
+    strip.innerHTML = AppState.showBookmarked ? '<div class="empty-state"><div class="empty-icon">☆</div><h3>No Bookmarks</h3><p>Tap the star on any question to save it.</p></div>' : '<div class="empty-state"><div class="empty-icon">🔍</div><h3>No Matches</h3><p>Adjust your search criteria.</p></div>'; return;
+  }
+
+  const renderList = filtered.slice(0, STRIP_LIMIT), remaining = filtered.length - renderList.length;
+  const subjColor = AppState.activeSubject ? getSubjectColor(AppState.activeSubject.subject) : '#6C4FF4';
+  const frag = document.createDocumentFragment();
+
+  renderList.forEach((q) => {
+    const origIdx = all.indexOf(q), bm = isBookmarked(q), bmKey = getBookmarkKey(q), isActive = AppState.activeQuestion === q;
+    const card = document.createElement('div');
+    card.className = 'strip-card' + (isActive ? ' active' : '');
+    card.innerHTML = `
+      <div class="sq-color-bar" style="background:${subjColor}"></div>
+      <div class="sq-top"><span class="sq-number">Q${origIdx + 1}</span><span class="sq-bookmark ${bm ? 'bm-on' : 'bm-off'}">${bm ? '★' : '☆'}</span></div>
+      <div class="sq-text">${escapeHtml(q.text)}</div>`;
+    card.addEventListener('click', () => selectQuestion(origIdx));
+    card.querySelector('.sq-bookmark').addEventListener('click', e => { e.stopPropagation(); toggleBookmarkByKey(bmKey); });
+    frag.appendChild(card);
+  });
+
+  if (remaining > 0) { const more = document.createElement('div'); more.className = 'strip-more'; more.textContent = `+${remaining} more hidden`; frag.appendChild(more); }
+  strip.innerHTML = ''; strip.appendChild(frag);
+}
+
+function toggleBookmarkFilter() { AppState.showBookmarked = !AppState.showBookmarked; const btn = document.getElementById('stripBmBtn'); btn.textContent = AppState.showBookmarked ? '★' : '☆'; btn.classList.toggle('active', AppState.showBookmarked); renderStrip(); }
+function scrollStrip(dir) { const strip = document.getElementById('questionStrip'); strip.scrollBy({ left: dir * (strip.clientWidth * 0.8), behavior: 'smooth' }); }
+
+/* ============================================================
+   SELECT / CUSTOM QUESTION
+   ============================================================ */
+function selectQuestion(index) {
+  const filtered = getFilteredQuestions(), q = filtered[index];
+  if (!q) return;
+  
+  AppState.activeQuestion = q; AppState.activeSource = 'preset';
+  AppState.response = null; AppState.responseStatus = null; AppState.responseError = null; AppState.showFull = false;
+  
+  renderStrip();
+  document.getElementById('responseSection').classList.add('show');
+  document.getElementById('rqLabel').textContent = 'Q' + (index + 1);
+  document.getElementById('rqText').textContent = q.text;
+
+  const localCache = safeStorageGet('omni_cache', {}), key = q.text + AppState.selectedModel;
+  if (localCache[key]) { AppState.response = localCache[key]; AppState.responseStatus = 'done'; renderCard(); return; }
+  fetchAnswer(q.text, SYSTEM_PROMPTS[AppState.selectedModel] || SYSTEM_PROMPTS.ai2, AppState.selectedModel);
+}
+
+function checkApiKey() { document.getElementById('apiKeyBanner').classList.toggle('show', !CONFIG.groqApiKey); }
+function onCustomInput() {
+  const input = document.getElementById('customInput'), count = document.getElementById('charCount'), btn = document.getElementById('submitBtn'), len = input.value.length;
+  count.textContent = `${len} / 300`; count.classList.toggle('over', len > 300);
+  if (AppState.customCount >= CONFIG.maxCustomQuestionsPerSession || AppState.cooldownRemaining > 0) { btn.disabled = true; return; }
+  btn.disabled = len < 10 || len > 300;
+}
+
+function submitCustom() {
+  if (AppState.customCount >= CONFIG.maxCustomQuestionsPerSession || AppState.cooldownRemaining > 0) return;
+  const input = document.getElementById('customInput'), q = input.value.trim();
+  if (q.length < 10 || q.length > 300) return;
+  if (!CONFIG.groqApiKey) { showToast('API key is not configured.'); return; }
+
+  AppState.customCount++; AppState.activeQuestion = q; AppState.activeSource = 'custom';
+  AppState.response = null; AppState.responseStatus = null; AppState.showFull = false; AppState.cooldownRemaining = CONFIG.cooldownSeconds;
+
+  const cdInterval = setInterval(() => {
+    AppState.cooldownRemaining--; updateSubmitBtn();
+    if (AppState.cooldownRemaining <= 0) { clearInterval(cdInterval); updateSubmitBtn(); }
+  }, 1000);
+
+  input.value = ''; onCustomInput();
+  if (AppState.customCount >= CONFIG.maxCustomQuestionsPerSession) { document.getElementById('customInputWrap').style.display = 'none'; document.getElementById('slotLimit').classList.add('show'); }
+
+  document.getElementById('responseSection').classList.add('show');
+  document.getElementById('rqLabel').textContent = 'Custom'; document.getElementById('rqText').textContent = q;
+
+  fetchAnswer(q, SYSTEM_PROMPTS[AppState.selectedModel] || SYSTEM_PROMPTS.ai2, AppState.selectedModel);
+}
+
+function updateSubmitBtn() {
+  const btn = document.getElementById('submitBtn');
+  if (AppState.cooldownRemaining > 0) { btn.disabled = true; btn.textContent = `Wait ${AppState.cooldownRemaining}s…`; } 
+  else { btn.disabled = false; btn.textContent = 'Ask AI →'; onCustomInput(); }
+}
+
+/* ============================================================
+   GROQ API
+   ============================================================ */
+async function fetchGroq(aiId, question, systemPrompt) {
+  const model = CONFIG.models[aiId]; if (!model) throw new Error('Model not configured');
+  const controller = new AbortController(), timeout = setTimeout(() => controller.abort(), 20000);
+  try {
+    const res = await fetch(GROQ_ENDPOINT, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CONFIG.groqApiKey}` },
+      body: JSON.stringify({ model, max_tokens: CONFIG.maxTokens, temperature: CONFIG.temperature, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: question }] }),
+      signal: controller.signal
+    });
+    clearTimeout(timeout);
+    if (res.status === 429) throw new Error('rate_limited');
+    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+    const data = await res.json(), text = ((data.choices && data.choices[0]?.message?.content) || '').replace(/<think>[\s\S]*?<\/think>/g, '').trim();
+    if (!text) throw new Error('empty'); return text;
+  } catch (err) { clearTimeout(timeout); if (err.name === 'AbortError') throw new Error('timeout'); throw err; }
+}
+
+function fetchAnswer(questionText, systemPrompt, modelId) {
+  AppState.responseStatus = 'loading'; renderCard();
+  fetchGroq(modelId, questionText, systemPrompt).then(text => {
+    clearRL(modelId); AppState.response = text; AppState.responseStatus = 'done'; renderCard();
+    const lc = safeStorageGet('omni_cache', {}); lc[questionText + modelId] = text; safeStorageSet('omni_cache', lc);
+  }).catch(err => {
+    if (err.message === 'rate_limited') markRL(modelId);
+    AppState.responseStatus = 'error'; AppState.responseError = err.message; renderCard();
+  });
+}
+
+/* ============================================================
+   RENDER CARD
+   ============================================================ */
+function renderCard() {
+  const wrap = document.getElementById('aiCardWrap');
+  if (!AppState.activeQuestion) { wrap.innerHTML = ''; return; }
+  const model = AI_MODELS.find(m => m.id === AppState.selectedModel) || AI_MODELS[1];
+
+  let bodyHtml = '', footerHtml = '';
+  if (AppState.responseStatus === 'loading') {
+    bodyHtml = `<div class="acs-loading"><div class="acs-skeleton"></div><div class="acs-skeleton" style="width:80%"></div><div class="acs-skeleton" style="width:50%"></div></div>`;
+  } else if (AppState.responseStatus === 'error') {
+    const errorMap = { 'rate_limited': 'is currently rate limited.', 'timeout': 'timed out.', 'empty': 'returned an empty response.' };
+    const friendly = errorMap[AppState.responseError] || 'encountered an error.';
+    bodyHtml = `<div class="acs-error">${model.label} ${friendly} <button class="retry-btn" onclick="retryAI()">Retry</button></div>`;
+  } else if (AppState.responseStatus === 'done' && AppState.response) {
+    bodyHtml = `<div class="acs-response-wrap ${AppState.showFull ? '' : 'collapsed'}"><div class="acs-response">${mdToHtml(AppState.response)}</div></div>`;
+    footerHtml = `<div class="acs-footer"><button class="acs-toggle-btn" onclick="toggleFull()">${AppState.showFull ? 'Hide details' : 'Show explanation'}</button></div>`;
+  } else return;
+
+  wrap.innerHTML = `
+    <div class="ai-card-single">
+      <div class="acs-header" style="border-left-color:${model.color}">
+        <div class="acs-header-left"><span class="acs-dot" style="background:${model.color}"></span><span class="acs-label" style="color:${model.color}">${model.label}</span></div>
+        <div class="acs-header-right"><span class="acs-tokens">${model.name}</span></div>
+      </div>
+      <div class="acs-body">${bodyHtml}</div>
+      ${footerHtml}
+    </div>`;
+}
+
+function toggleFull() { AppState.showFull = !AppState.showFull; renderCard(); }
+function retryAI() {
+  if (!AppState.activeQuestion) return;
+  const qText = typeof AppState.activeQuestion === 'string' ? AppState.activeQuestion : AppState.activeQuestion.text;
+  if (AppState.activeSource === 'preset') {
+    const lc = safeStorageGet('omni_cache', {});
+    if (lc[qText + AppState.selectedModel]) { AppState.response = lc[qText + AppState.selectedModel]; AppState.responseStatus = 'done'; renderCard(); return; }
+  }
+  fetchAnswer(qText, SYSTEM_PROMPTS[AppState.selectedModel] || SYSTEM_PROMPTS.ai2, AppState.selectedModel);
+}
+
+function resetData() {
+  AppState.activeQuestion = null; AppState.activeSource = null; AppState.response = null; AppState.customCount = 0; AppState.cooldownRemaining = 0;
+  document.getElementById('responseSection').classList.remove('show'); document.getElementById('customInputWrap').style.display = 'block';
+  document.getElementById('slotLimit').classList.remove('show'); document.getElementById('customInput').value = '';
+  document.getElementById('submitBtn').disabled = true; document.getElementById('submitBtn').textContent = 'Ask AI →';
+  document.getElementById('charCount').textContent = '0 / 300'; document.getElementById('aiCardWrap').innerHTML = '';
+  renderStrip(); showToast('Session tracking reset');
+}
+
+/* ============================================================
+   VIEWS & EVENTS
+   ============================================================ */
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+  const link = document.querySelector(`.sidebar-nav a[data-view="${name}"]`);
+  if (link) link.classList.add('active');
+  document.getElementById(name === 'about' ? 'viewAbout' : 'viewQuestions').classList.add('active');
+  if (name === 'current' && AppState.activeQuestion) {
+    const content = document.getElementById('mainContent');
+    content.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  if (window.innerWidth <= 768) { document.getElementById('sidebar').classList.remove('open'); document.getElementById('backdrop').classList.remove('show'); }
+}
+
+window.addEventListener('offline', () => showToast("Offline mode. Preset questions remain available."));
+window.addEventListener('online', () => showToast('Connection restored.'));
+</script>
+</body>
+</html>
