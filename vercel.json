@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pip install openpyxl requests -q && python generate.py",
+  "buildCommand": "python3 --version && pip3 install openpyxl requests && python3 generate.py",
   "outputDirectory": ".",
   "framework": null
 }
