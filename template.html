@@ -244,21 +244,19 @@ body::before {
 
 .landing-card {
   display: flex; align-items: center; gap: 12px;
-  background: rgba(255,255,255,0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(255,255,255,0.9);
   border-radius: 16px;
   padding: 16px 24px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 20px rgba(0,0,0,0.04);
   min-width: 190px;
   flex: 1 0 auto;
 }
 [data-theme="dark"] .landing-card {
-  background: rgba(19,19,43,0.5);
-  border-color: rgba(255,255,255,0.04);
+  background: rgba(19,19,43,0.9);
+  border-color: rgba(255,255,255,0.06);
   box-shadow: 0 4px 24px rgba(0,0,0,0.15);
 }
 .landing-card:hover {
@@ -306,8 +304,7 @@ body::before {
   width: 42px; height: 42px;
   border-radius: 12px;
   border: 1px solid #DFE1E6;
-  background: rgba(255,255,255,0.5);
-  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.85);
   cursor: pointer;
   color: #525866;
   transition: all 0.25s ease;
@@ -378,7 +375,7 @@ body::before {
 .sidebar-header .logo span { color: var(--text); font-weight: 700; }
 
 .sidebar-nav {
-  flex: 1;
+  flex: 0 0 auto;
   padding: 10px 10px 8px;
   display: flex;
   flex-direction: column;
@@ -504,6 +501,9 @@ body::before {
   font-size: 11px;
   color: var(--text-muted);
   flex-shrink: 0;
+  background: var(--card);
+  position: sticky;
+  bottom: 0;
 }
 [data-theme="dark"] .sidebar-footer { border-top-color: rgba(139,124,247,0.08); }
 .sidebar-footer-inner {
@@ -1106,6 +1106,7 @@ body::before {
 .sidebar-close { display: none; }
 .hamburger { display: none; }
 .mobile-logo { display: none; }
+.mobile-theme-btn { display: none; }
 .backdrop { display: none; }
 
 @media (max-width: 768px) {
@@ -1116,6 +1117,7 @@ body::before {
     width: 270px;
     min-width: 270px;
     height: 100vh;
+    overflow-y: auto;
     z-index: 100;
     transition: left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
     box-shadow: 8px 0 40px rgba(0,0,0,0.15);
@@ -1137,7 +1139,6 @@ body::before {
     position: fixed; top: 0; left: 0; right: 0; z-index: 50;
     height: 50px; background: var(--card); border-bottom: 1px solid var(--border);
     display: flex; align-items: center; gap: 10px; padding: 0 14px;
-    backdrop-filter: blur(16px);
   }
   .hamburger {
     display: flex; align-items: center; justify-content: center;
@@ -1146,6 +1147,17 @@ body::before {
   }
   .hamburger:hover { color: var(--purple); background: var(--purple-bg); }
   .mobile-logo { display: block; font-size: 15px; font-weight: 700; color: var(--purple); letter-spacing: -0.3px; }
+  .mobile-theme-btn {
+    display: flex; align-items: center; justify-content: center;
+    margin-left: auto; background: none; border: none; color: var(--text-secondary); cursor: pointer;
+    width: 34px; height: 34px; border-radius: 8px; transition: all var(--transition);
+  }
+  .mobile-theme-btn:hover { color: var(--purple); background: var(--purple-bg); }
+  .mobile-theme-btn svg { display: none; }
+  [data-theme="dark"] .mobile-theme-btn .moon { display: block; }
+  [data-theme="dark"] .mobile-theme-btn .sun { display: none; }
+  [data-theme="light"] .mobile-theme-btn .sun { display: block; }
+  [data-theme="light"] .mobile-theme-btn .moon { display: none; }
 
   .backdrop {
     display: block;
@@ -1161,9 +1173,9 @@ body::before {
   .model-option span:last-child { display: none; }
   .strip-card { width: 150px; }
   .response-question { flex-direction: column; align-items: flex-start; }
-  .landing-body { padding: 24px 16px; }
+  .landing-body { padding: 24px 16px 90px; }
   .landing-content { max-width: 100%; }
-  .landing-disclaimer { font-size: 11px; }
+  .landing-disclaimer { font-size: 11px; margin-bottom: 34px; }
   .subjects-scroll { max-height: 220px; }
   .subj-item { font-size: 13px; padding: 7px 12px 7px 16px; }
   .semester-header { font-size: 12px; padding: 6px 12px; }
@@ -1216,7 +1228,7 @@ body::before {
   .empty-state h3 { font-size: 15px; }
   .empty-state p { font-size: 13px; }
   .toast { font-size: 13px; padding: 10px 18px; }
-  .landing-body { padding: 16px 10px; }
+  .landing-body { padding: 16px 10px 80px; }
   .landing-content { padding-top: 16px; }
   .landing-title { font-size: 18px; }
   .landing-subtitle { font-size: 12px; }
@@ -1228,7 +1240,7 @@ body::before {
   .landing-brand { margin-bottom: 10px; }
   .landing-icon { width: 48px; height: 48px; margin-bottom: 14px; }
   .landing-icon svg { width: 24px; height: 24px; }
-  .landing-disclaimer { font-size: 10px; margin: 6px auto 20px; line-height: 1.5; }
+  .landing-disclaimer { font-size: 10px; margin: 6px auto 28px; line-height: 1.5; }
   .acs-body { padding: 12px 14px; font-size: 14px; }
   .acs-toggle-btn { font-size: 12px; padding: 6px 14px; }
 }
@@ -1328,6 +1340,10 @@ body::before {
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="mobile-logo">Omni-Answer</div>
+    <button class="mobile-theme-btn" onclick="toggleTheme()" title="Toggle dark mode">
+      <svg class="sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      <svg class="moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
   </div>
   <div class="backdrop" onclick="toggleSidebar()"></div>
 
@@ -2225,8 +2241,9 @@ function renderStrip() {
   }).join('');
 }
 
+const debounceStripSearch = debounce(() => renderStrip(), 120);
 function onStripSearch() {
-  renderStrip();
+  debounceStripSearch();
 }
 
 function toggleBookmarkFilter() {
@@ -2260,6 +2277,14 @@ function setLocalCache(cache) {
 /* ============================================================
    UTILITY
    ============================================================ */
+function debounce(fn, ms) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+
 function escapeHtml(str) {
   const d = document.createElement('div');
   d.textContent = str;
