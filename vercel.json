@@ -1,5 +1,5 @@
 {
-  "buildCommand": "uv pip install openpyxl requests && uv run python3 generate.py",
+  "buildCommand": "uv venv && uv pip install openpyxl requests && uv run python3 generate.py",
   "outputDirectory": ".",
   "framework": null
 }
