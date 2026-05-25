@@ -42,6 +42,7 @@
   --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.no-transition, .no-transition * { transition: none !important; }
 
 [data-theme="dark"] {
   --purple: #8B7CF7;
@@ -1582,24 +1583,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function toggleTheme() {
+  document.documentElement.classList.add('no-transition');
   const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('omni_theme', next);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.documentElement.classList.remove('no-transition');
+  }));
 }
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('backdrop').classList.toggle('show');
 }
-
-document.addEventListener('click', function(e) {
-  const sidebar = document.getElementById('sidebar');
-  if (!sidebar.classList.contains('open')) return;
-  if (sidebar.contains(e.target)) return;
-  if (e.target.closest('.hamburger')) return;
-  sidebar.classList.remove('open');
-  document.getElementById('backdrop').classList.remove('show');
-});
 
 /* ============================================================
    LANDING
