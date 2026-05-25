@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Omni-Answer Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -112,7 +112,6 @@ body::before {
   transition: opacity 0.5s ease, transform 0.5s ease;
   opacity: 1;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }
 [data-theme="dark"] .landing { background: #0B0B1A; }
 .landing.hidden {
@@ -1580,6 +1579,16 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollStrip(dx < 0 ? 1 : -1);
     }
   }, { passive: true });
+
+  document.getElementById('sidebar').addEventListener('click', e => e.stopPropagation());
+});
+
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar.classList.contains('open')) return;
+  if (e.target.closest('.hamburger')) return;
+  sidebar.classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
 });
 
 function toggleTheme() {
