@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Omni-Answer Explorer</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6C4FF4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 <style>
@@ -1028,8 +1030,19 @@ body::before {
 
 .acs-footer {
   padding: 10px 20px 16px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+.acs-actions { display: flex; gap: 4px; }
+.acs-action-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); padding: 5px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); line-height: 1;
+}
+.acs-action-btn:hover { color: var(--purple); background: var(--purple-bg); }
+.acs-action-btn svg { width: 15px; height: 15px; display: block; }
 .acs-toggle-btn {
   background: none;
   border: none;
@@ -1071,7 +1084,8 @@ body::before {
    ============================================================ */
 .view { display: none; animation: fadeIn 0.25s ease; }
 .view.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1;   }
+}
 
 /* ============================================================
    ABOUT
@@ -1578,6 +1592,10 @@ document.addEventListener('DOMContentLoaded', () => {
   checkApiKey();
   renderSubjects();
   renderStrip();
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js');
+  }
 
   const stripEl = document.getElementById('questionStrip');
   stripEl.addEventListener('touchstart', e => {
@@ -2091,6 +2109,14 @@ function renderCard() {
       ${AppState.responseStatus === 'done' && AppState.response ? `
       <div class="acs-footer">
         <button class="acs-toggle-btn" onclick="toggleFull()">${isExpanded ? 'Show less' : 'Show explanation'}</button>
+        <div class="acs-actions">
+          <button class="acs-action-btn" onclick="copyAnswer()" title="Copy answer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+          <button class="acs-action-btn" onclick="shareAnswer()" title="Share">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </button>
+        </div>
       </div>` : ''}
     </div>
   `;
@@ -2101,6 +2127,33 @@ function toggleFull() {
   renderCard();
   if (AppState.showFull) {
     document.getElementById('aiCardWrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function copyAnswer() {
+  const q = AppState.activeQuestion;
+  if (!q || !AppState.response) return;
+  const text = "Q: " + q.text + "\n\n" + AppState.response;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('Answer copied');
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Answer copied');
+  });
+}
+
+function shareAnswer() {
+  const q = AppState.activeQuestion;
+  if (!q || !AppState.response) return;
+  const text = "Q: " + q.text + "\n\n" + AppState.response;
+  if (navigator.share) {
+    navigator.share({ title: 'Omni-Answer', text }).catch(() => {});
+  } else {
+    copyAnswer();
+    showToast('Link copied - share it anywhere');
   }
 }
 
