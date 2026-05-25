@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Omni-Answer Explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -1132,7 +1132,7 @@ body::before {
   }
   .sidebar-close:hover { color: var(--text); }
 
-  .main { margin-left: 0; padding: 14px; padding-top: 54px; padding-bottom: 80px; }
+  .main { margin-left: 0; padding: 14px; padding-top: 60px; padding-bottom: 100px; }
   .main-header .left h1 { font-size: 22px; }
   .main-header .left p { font-size: 14px; }
 
@@ -1174,7 +1174,7 @@ body::before {
   .model-option span:last-child { display: none; }
   .strip-card { width: 150px; }
   .response-question { flex-direction: column; align-items: flex-start; }
-  .landing-body { padding: 24px 16px 90px; }
+  .landing-body { padding: 24px 16px; }
   .landing-content { max-width: 100%; }
   .landing-disclaimer { font-size: 11px; margin-bottom: 34px; }
   .subjects-scroll { max-height: 50vh; }
@@ -1194,7 +1194,7 @@ body::before {
 }
 
 @media (max-width: 480px) {
-  .main { padding: 10px; padding-top: 54px; padding-bottom: 90px; }
+  .main { padding: 10px; padding-top: 60px; padding-bottom: 120px; }
   .main-header .left h1 { font-size: 19px; }
   .main-header { margin-bottom: 18px; }
   .ai-grid { gap: 10px; }
@@ -1232,7 +1232,7 @@ body::before {
   .empty-state h3 { font-size: 15px; }
   .empty-state p { font-size: 13px; }
   .toast { font-size: 13px; padding: 10px 18px; }
-  .landing-body { padding: 16px 10px 80px; }
+  .landing-body { padding: 20px 10px 80px; }
   .landing-content { padding-top: 16px; }
   .landing-title { font-size: 18px; }
   .landing-subtitle { font-size: 12px; }
@@ -1592,6 +1592,15 @@ function toggleSidebar() {
   document.getElementById('backdrop').classList.toggle('show');
 }
 
+document.addEventListener('click', function(e) {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar.classList.contains('open')) return;
+  if (sidebar.contains(e.target)) return;
+  if (e.target.closest('.hamburger')) return;
+  sidebar.classList.remove('open');
+  document.getElementById('backdrop').classList.remove('show');
+});
+
 /* ============================================================
    LANDING
    ============================================================ */
@@ -1822,9 +1831,9 @@ function toggleSemester(name) {
 }
 
 function toggleAllSemesters() {
-  const all = {};
-  AppState.subjects.forEach(s => { all[s.semester] = true; });
-  AppState.openSemesters = all;
+  const semesters = [...new Set(AppState.subjects.map(s => s.semester))];
+  const allOpen = semesters.length > 0 && semesters.every(s => AppState.openSemesters[s]);
+  AppState.openSemesters = allOpen ? {} : Object.fromEntries(semesters.map(s => [s, true]));
   renderSubjects();
 }
 
