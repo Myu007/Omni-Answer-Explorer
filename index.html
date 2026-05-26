@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Omni-Answer Explorer</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZPSXQRCW05"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-ZPSXQRCW05');
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
 <style>
@@ -918,6 +926,28 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.practice-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: #d4edda;
+  color: #155724;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  border: 1.5px solid #b8dfc6;
+  cursor: pointer;
+  white-space: nowrap;
+  animation: glowPulse 2s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(46, 204, 113, 0.4); }
+  50% { box-shadow: 0 0 18px rgba(46, 204, 113, 0.8); }
+}
+
 .md-option {
   display: flex;
   align-items: center;
@@ -1441,6 +1471,7 @@ body::before {
           </button>
           <div class="md-menu" id="mdMenu"></div>
         </div>
+        <a class="practice-pill" href="https://examevolve.blogspot.com/2025/05/links-demo.html" target="_blank">📝 Practise MCQs (PYQs)</a>
       </div>
       <div class="ai-card-wrap" id="aiCardWrap"></div>
       <div class="response-disclaimer">Answers are AI-generated and may differ from expected exam answers. This site is made purely to make studying easier — we are not responsible for any discrepancies. Always cross-check with your curriculum.</div>
