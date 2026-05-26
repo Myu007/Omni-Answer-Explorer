@@ -785,6 +785,24 @@ body::before {
 .response-section { display: none; animation: fadeSlideIn 0.3s ease; }
 .response-section.show { display: block; }
 .response-disclaimer { margin-top: 24px; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 1.6; max-width: 520px; margin-left: auto; margin-right: auto; }
+.app-footer {
+  margin-top: 40px;
+  padding: 24px 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.developer-info p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+.disclaimer {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 560px;
+  margin: 0 auto;
+}
 @keyframes fadeSlideIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -1269,7 +1287,6 @@ body::before {
   .ai-grid { gap: 14px; }
 }
 </style>
-   <script src="https://compassionpersonify.com/34/b8/c9/34b8c98f0529aa926b14a870868ea323.js"></script>
 </head>
 <body>
 
@@ -1430,6 +1447,19 @@ body::before {
       </div>
       <div class="ai-card-wrap" id="aiCardWrap"></div>
       <div class="response-disclaimer">Answers are AI-generated and may differ from expected exam answers. This site is made purely to make studying easier — we are not responsible for any discrepancies. Always cross-check with your curriculum.</div>
+      <footer class="app-footer">
+        <div class="developer-info">
+          <p>
+            Developed with ❤️ •
+            <a href="https://dub.sh/Pp0jofv" class="ig-link" target="_blank" style="color:#FFD700; text-decoration:none; font-weight:600;">
+              Follow on Instagram for queries & support
+            </a>
+          </p>
+        </div>
+        <p class="disclaimer">
+          DISCLAIMER: The following questions are sourced from the question bank and are provided for reference purposes only. This website has no official affiliation with the university, and content accuracy cannot be guaranteed. Wishing you all the best in your academic journey 😊
+        </p>
+      </footer>
     </div>
   </div>
 
@@ -1447,7 +1477,11 @@ body::before {
         <p>All preset questions and AI-generated answers are stored entirely in your browser's local storage. Custom questions are sent securely for processing and are not stored. No data is collected, tracked, or shared.</p>
       </section>
       <section>
-        <h3>Check Out Our Other Projects</h3>
+        <h3>Follow the Developer</h3>
+        <p>For updates, queries, questions and suggestions — <a href="https://dub.sh/Pp0jofv" id="instaLink" target="_blank" rel="noopener">Instagram</a></p>
+      </section>
+      <section>
+        <h3>Our Other Projects</h3>
         <p>📄 <a href="https://www.pdfyre.xyz/" target="_blank" rel="noopener">PDFyre.xyz</a> — Turn your PDF notes into readable, searchable text for your notes app on iPad or tablet. A free, locally working OCR app.</p>
         <p>📅 <a href="https://medschedulepro.vercel.app/" target="_blank" rel="noopener">MedSchedulePro</a> — Check your university timetable faster and more reliably, even when the official sites fail. Packed with new features.</p>
         <p>📝 <a href="https://examevolve.blogspot.com/2025/05/links-demo.html" target="_blank" rel="noopener">ExamEvolve</a> — MBBS MCQ exam prep links and resources.</p>
