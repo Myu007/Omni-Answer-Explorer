@@ -1501,8 +1501,8 @@ const INJECTED_SUBJECTS = [{"id": "Semester 2/2-Anatomy+Histology", "semester": 
 const INJECTED_CACHE = {};
 const INJECTED_CONFIG = {
   "models": {
-    "ai1": "gemma2-9b-it",
-    "ai2": "mixtral-8x7b-32768",
+    "ai1": "openai/gpt-oss-20b",
+    "ai2": "openai/gpt-oss-120b",
     "ai3": "llama-3.1-8b-instant",
     "ai4": "meta-llama/llama-4-scout-17b-16e-instruct"
   },
@@ -1519,8 +1519,8 @@ const INJECTED_CONFIG = {
 const CONFIG = Object.assign({
   groqApiKey: "",
   models: {
-    ai1: "gemma2-9b-it",
-    ai2: "mixtral-8x7b-32768",
+    ai1: "openai/gpt-oss-20b",
+    ai2: "openai/gpt-oss-120b",
     ai3: "llama-3.1-8b-instant",
     ai4: "meta-llama/llama-4-scout-17b-16e-instruct"
   },
@@ -1539,13 +1539,14 @@ const SYSTEM_PROMPTS = {
 
 const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
 const AI_MODELS = [
-  { id: "ai1", label: "AI 1", name: "gemma2-9b", color: "#3B82F6", dot: "#3B82F6" },
-  { id: "ai2", label: "AI 2", name: "mixtral-8x7b", color: "#10B981", dot: "#10B981" },
+  { id: "ai1", label: "AI 1", name: "gpt-oss-20b", color: "#3B82F6", dot: "#3B82F6" },
+  { id: "ai2", label: "AI 2", name: "gpt-oss-120b", color: "#10B981", dot: "#10B981" },
   { id: "ai3", label: "AI 3", name: "llama-3.1-8b", color: "#EF4444", dot: "#EF4444" },
   { id: "ai4", label: "AI 4", name: "llama-4-scout", color: "#F59E0B", dot: "#F59E0B" }
 ];
 
 const MODEL_FALLBACKS = { ai1: "llama-3.3-70b-versatile", ai2: "groq/compound-mini" };
+const FALLBACK_DISPLAY = { ai1: "llama-3.3", ai2: "compound-mini" };
 let FallbackActive = {};
 function getActiveModelName(aiId) {
   return FallbackActive[aiId] ? MODEL_FALLBACKS[aiId] : CONFIG.models[aiId];
@@ -1554,7 +1555,7 @@ function activateFallback(modelId) {
   FallbackActive[modelId] = true;
   const entry = AI_MODELS.find(m => m.id === modelId);
   if (!entry) return;
-  entry.name = (modelId === "ai1" ? "llama-3.3" : "compound-mini") + " (fallback)";
+  entry.name = (FALLBACK_DISPLAY[modelId] || "fallback") + " (fallback)";
   renderModelPicker();
   if (AppState.activeQuestion) renderCard();
 }
