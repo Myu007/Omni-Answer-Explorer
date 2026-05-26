@@ -2393,5 +2393,81 @@ function showToast(msg) {
 window.addEventListener('offline', () => showToast("You're offline. Preset questions still work."));
 window.addEventListener('online', () => showToast('Back online.'));
 </script>
+   <footer class="app-footer">
+    <div class="developer-info">
+        <p>
+            Developed with ❤️ •
+            <a href="https://dub.sh/Pp0jofv"
+               class="ig-link"
+               target="_blank">
+                Follow on Instagram for queries & support
+            </a>
+        </p>
+    </div>
+
+    <p class="disclaimer">
+        DISCLAIMER: The following questions are sourced from the question bank and are provided for reference purposes only. This website has no official affiliation with the university, and content accuracy cannot be guaranteed. Wishing you all the best in your academic journey 😊
+    </p>
+</footer>
+
+<style>
+.app-footer {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    margin-top: auto;
+}
+
+/* Exam Mode Footer Override */
+body.exam-mode .app-footer {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    border-radius: 0;
+}
+
+.developer-info {
+    font-weight: 600;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.ig-link {
+    color: #FFD700 !important; /* Gold */
+    text-decoration: underline;
+    font-weight: 700;
+    transition: 0.2s ease;
+}
+
+.ig-link:hover {
+    color: #FFE55C !important;
+    opacity: 1;
+}
+
+.disclaimer {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .app-footer {
+        padding: 20px 15px;
+    }
+
+    .disclaimer {
+        font-size: 0.75rem;
+    }
+}
+</style>
 </body>
 </html>
