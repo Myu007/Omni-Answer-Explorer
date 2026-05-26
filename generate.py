@@ -25,8 +25,8 @@ TEMPLATE_PATH = "template.html"
 OUTPUT_PATH = "index.html"
 
 MODELS = {
-    "ai1": "llama-3.3-70b-versatile",
-    "ai2": "groq/compound-mini",
+    "ai1": "gemma2-9b-it",
+    "ai2": "mixtral-8x7b-32768",
     "ai3": "llama-3.1-8b-instant",
     "ai4": "meta-llama/llama-4-scout-17b-16e-instruct",
 }
