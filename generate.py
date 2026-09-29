@@ -8,7 +8,7 @@ semester/subject info, and injects everything into template.html.
 Designed for GitHub Actions: push Excel files → auto rebuild → auto deploy.
 
 Usage:
-    python generate.py          # requires GROQ_API_KEY env var
+    python generate.py          # no secrets needed; key lives in server env
 
 Requirements:
     pip install openpyxl
@@ -18,7 +18,7 @@ import json, os, sys, glob
 
 # ─── Config ───────────────────────────────────────────────────────────────────
 
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+# API key lives server-side only (Vercel env GROQ_API_KEY, used by api/answer.js).
 
 SOURCE_DIR = "source"
 TEMPLATE_PATH = "template.html"
@@ -27,8 +27,8 @@ OUTPUT_PATH = "index.html"
 MODELS = {
     "ai1": "openai/gpt-oss-20b",
     "ai2": "openai/gpt-oss-120b",
-    "ai3": "llama-3.1-8b-instant",
-    "ai4": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "ai3": "openai/gpt-oss-20b",
+    "ai4": "openai/gpt-oss-120b",
 }
 
 # ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -155,7 +155,6 @@ def build_config_block():
         "temperature": 0.7,
         "maxCustomQuestionsPerSession": 3,
         "cooldownSeconds": 10,
-        "groqApiKey": GROQ_API_KEY if GROQ_API_KEY else "",
     }
     return json.dumps(config, indent=2)
 
@@ -205,9 +204,7 @@ def main():
     log(f"Injecting into {TEMPLATE_PATH}…")
     inject_into_template(questions, subjects, TEMPLATE_PATH, OUTPUT_PATH)
 
-    if not GROQ_API_KEY:
-        log("WARNING: GROQ_API_KEY is empty — custom questions and live AI answers won't work.")
-        log("Set GROQ_API_KEY as an environment variable or edit this script.")
+    log("Note: answers are served by api/answer.js, which reads GROQ_API_KEY from the server environment (Vercel). No key is baked into index.html.")
 
     log(f"Done. {OUTPUT_PATH} ready to deploy.")
 

@@ -1566,7 +1566,7 @@ body::before {
           <button class="md-selected" id="mdSelected" onclick="toggleDropdown()">
             <span class="md-dot" id="mdDot"></span>
             <span class="md-label" id="mdLabel">AI 2</span>
-            <span class="md-name" id="mdName">compound-mini</span>
+            <span class="md-name" id="mdName">gpt-oss-120b</span>
             <svg class="md-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="md-menu" id="mdMenu"></div>
@@ -1648,12 +1648,11 @@ const INJECTED_CONFIG = /* INJECT_CONFIG */;
    CONFIG
    ============================================================ */
 const CONFIG = Object.assign({
-  groqApiKey: "",
   models: {
     ai1: "openai/gpt-oss-20b",
     ai2: "openai/gpt-oss-120b",
-    ai3: "llama-3.1-8b-instant",
-    ai4: "meta-llama/llama-4-scout-17b-16e-instruct"
+    ai3: "openai/gpt-oss-20b",
+    ai4: "openai/gpt-oss-120b"
   },
   maxTokens: 300,
   temperature: 0.7,
@@ -1668,16 +1667,16 @@ const SYSTEM_PROMPTS = {
   ai4: "You are answering a medical exam question. Explain like a teacher preparing a student for an MCQ exam. Focus on the single most important exam fact. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**."
 };
 
-const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
+const ANSWER_ENDPOINT = '/api/answer';
 const AI_MODELS = [
   { id: "ai1", label: "AI 1", name: "gpt-oss-20b", color: "#3B82F6", dot: "#3B82F6" },
   { id: "ai2", label: "AI 2", name: "gpt-oss-120b", color: "#10B981", dot: "#10B981" },
-  { id: "ai3", label: "AI 3", name: "llama-3.1-8b", color: "#EF4444", dot: "#EF4444" },
-  { id: "ai4", label: "AI 4", name: "llama-4-scout", color: "#F59E0B", dot: "#F59E0B" }
+  { id: "ai3", label: "AI 3", name: "gpt-oss-20b", color: "#EF4444", dot: "#EF4444" },
+  { id: "ai4", label: "AI 4", name: "gpt-oss-120b", color: "#F59E0B", dot: "#F59E0B" }
 ];
 
-const MODEL_FALLBACKS = { ai1: "llama-3.3-70b-versatile", ai2: "groq/compound-mini" };
-const FALLBACK_DISPLAY = { ai1: "llama-3.3", ai2: "compound-mini" };
+const MODEL_FALLBACKS = { ai1: "openai/gpt-oss-120b", ai2: "openai/gpt-oss-20b", ai3: "openai/gpt-oss-120b", ai4: "openai/gpt-oss-20b" };
+const FALLBACK_DISPLAY = { ai1: "gpt-oss-120b", ai2: "gpt-oss-20b", ai3: "gpt-oss-120b", ai4: "gpt-oss-20b" };
 let FallbackActive = {};
 function getActiveModelName(aiId) {
   return FallbackActive[aiId] ? MODEL_FALLBACKS[aiId] : CONFIG.models[aiId];
@@ -1996,8 +1995,8 @@ function fetchAnswer(questionText, systemPrompt, modelId) {
 }
 
 function checkApiKey() {
-  const banner = document.getElementById('apiKeyBanner');
-  banner.classList.toggle('show', !CONFIG.groqApiKey);
+  // Key lives server-side (api/answer.js) — nothing to warn about client-side.
+  document.getElementById('apiKeyBanner').classList.remove('show');
 }
 
 /* ============================================================
@@ -2068,7 +2067,7 @@ function selectSubject(id) {
   AppState.responseStatus = null;
   AppState.showFull = false;
   document.getElementById('responseSection').classList.remove('show');
-  document.getElementById('apiKeyBanner').classList.toggle('show', !CONFIG.groqApiKey);
+  checkApiKey();
   renderSubjects();
   renderStrip();
   const filtered = getFilteredQuestions();
@@ -2145,11 +2144,6 @@ function submitCustom() {
   const input = document.getElementById('customInput');
   const q = input.value.trim();
   if (q.length < 10 || q.length > 300) return;
-  if (!CONFIG.groqApiKey) {
-    showToast('API key not configured. Custom questions unavailable.');
-    return;
-  }
-
   AppState.customCount++;
   AppState.activeQuestion = q;
   AppState.activeSource = 'custom';
@@ -2198,36 +2192,33 @@ function updateSubmitBtn() {
 }
 
 /* ============================================================
-   GROQ API
+   ANSWER API (server proxy — key never leaves the server)
    ============================================================ */
 async function fetchGroq(aiId, question, systemPrompt) {
   const model = getActiveModelName(aiId);
   if (!model) throw new Error('Model not configured');
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeout = setTimeout(() => controller.abort(), 25000);
   try {
-    const res = await fetch(GROQ_ENDPOINT, {
+    const res = await fetch(ANSWER_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${CONFIG.groqApiKey}` },
-      body: JSON.stringify({
-        model,
-        max_tokens: CONFIG.maxTokens,
-        temperature: CONFIG.temperature,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: question }
-        ]
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, systemPrompt, question }),
       signal: controller.signal
     });
     clearTimeout(timeout);
     if (res.status === 429) throw new Error('rate_limited');
-    if (!res.ok) {
-      const body = await res.text().catch(() => '');
-      throw new Error(`HTTP ${res.status}: ${body.slice(0, 100)}`);
+    let data = {};
+    try { data = await res.json(); } catch { throw new Error(`HTTP ${res.status}`); }
+    if (!res.ok || data.error) {
+      const code = data.error || `HTTP ${res.status}`;
+      if (code === 'rate_limited') throw new Error('rate_limited');
+      if (code === 'timeout') throw new Error('timeout');
+      if (code === 'empty') throw new Error('empty');
+      if (code === 'server_misconfigured') throw new Error('AI service is not configured. Please try again later.');
+      throw new Error(String(code).slice(0, 100));
     }
-    const data = await res.json();
-    const raw = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || '';
+    const raw = data.text || '';
     if (!raw.trim()) throw new Error('empty');
     const text = raw.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
     if (!text) throw new Error('empty');
@@ -2547,8 +2538,15 @@ function scrollStrip(dir) {
 function getLocalCache() {
   try { return JSON.parse(localStorage.getItem('omni_cache') || '{}'); } catch { return {}; }
 }
+const MAX_CACHE_ENTRIES = 200;
 function setLocalCache(cache) {
-  try { localStorage.setItem('omni_cache', JSON.stringify(cache)); } catch {}
+  try {
+    const keys = Object.keys(cache);
+    while (keys.length > MAX_CACHE_ENTRIES) {
+      delete cache[keys.shift()];
+    }
+    localStorage.setItem('omni_cache', JSON.stringify(cache));
+  } catch {}
 }
 
 /* ============================================================
