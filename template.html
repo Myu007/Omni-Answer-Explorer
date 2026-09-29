@@ -1397,6 +1397,233 @@ body::before {
   .main { padding: 28px 24px; }
   .ai-grid { gap: 14px; }
 }
+
+/* ============================================================
+   REDESIGN LAYER — evolved purple identity: depth, motion, fluid
+   Pure overrides; layout and app logic untouched.
+   ============================================================ */
+:root {
+  --purple-deep: #4A32C8;
+  --gradient-brand: linear-gradient(135deg, #6C4FF4, #3B82F6);
+  --gradient-text: linear-gradient(115deg, #6C4FF4 10%, #3B82F6 55%, #0EA5A0 100%);
+  --shadow-pop: 0 18px 50px rgba(108,79,244,0.16), 0 4px 12px rgba(0,0,0,0.05);
+  --ring: 0 0 0 3px rgba(108,79,244,0.18);
+  --ease-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-theme="dark"] {
+  --gradient-text: linear-gradient(115deg, #A99CFF 10%, #7DB4FF 55%, #5EEAD4 100%);
+  --shadow-pop: 0 18px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,124,247,0.12);
+  --ring: 0 0 0 3px rgba(139,124,247,0.25);
+}
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes iconFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+::selection { background: rgba(108,79,244,0.25); }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--purple), #3B82F6); }
+
+/* Landing */
+.landing-title {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.landing-icon { animation: iconFloat 6s ease-in-out infinite; }
+.landing-card { animation: cardUp 0.55s var(--ease-out) backwards; }
+.landing-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: var(--shadow-pop);
+  transition-timing-function: var(--ease-spring);
+}
+
+/* Sidebar */
+.sidebar-nav a { transition: all 0.18s var(--ease-out); }
+.sidebar-nav a.active {
+  background: linear-gradient(90deg, var(--purple-bg), transparent 80%);
+}
+.subj-item { transition: all 0.16s var(--ease-out); }
+
+/* Question strip — fluid + cheap to scroll */
+.strip-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 118px;
+  transition: transform 0.22s var(--ease-spring), box-shadow 0.22s var(--ease-out), border-color 0.2s ease;
+}
+.strip-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--purple);
+  box-shadow: var(--shadow-pop);
+}
+.strip-card:active { transform: scale(0.96); }
+.strip-card.active {
+  border-color: var(--purple);
+  box-shadow: var(--ring), var(--shadow-md);
+}
+
+/* Answer card */
+.ai-card-single {
+  position: relative;
+  animation: popIn 0.32s var(--ease-out);
+  box-shadow: var(--shadow-md);
+}
+.ai-card-single::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gradient-brand);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.acs-persp {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.response-question { animation: popIn 0.3s var(--ease-out); }
+.acs-toggle-btn, .acs-action-btn { transition: all 0.16s var(--ease-out); }
+.acs-toggle-btn:active, .acs-action-btn:active { transform: scale(0.92); }
+
+/* Skeleton */
+.acs-body .acs-skeleton {
+  min-width: 45%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+/* Model picker */
+.md-selected { transition: all 0.18s var(--ease-out); }
+.md-selected:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.md-selected.open { box-shadow: var(--ring); }
+.md-option { transition: background 0.12s ease, padding-left 0.16s var(--ease-out); }
+.md-option:hover { padding-left: 18px; }
+.md-option.active::after { content: '✓'; margin-left: auto; font-weight: 700; }
+.md-option .mo-name { margin-left: 4px; }
+.md-option.active .mo-name { margin-right: 2px; }
+
+/* Buttons + inputs */
+.custom-input-wrap .submit-btn, .btn-primary {
+  background: var(--gradient-brand);
+  box-shadow: 0 4px 14px rgba(108,79,244,0.35);
+  transition: all 0.18s var(--ease-out);
+}
+.custom-input-wrap .submit-btn:hover:not(:disabled), .btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(108,79,244,0.45);
+  opacity: 1;
+}
+.custom-input-wrap .submit-btn:active:not(:disabled), .btn-primary:active:not(:disabled) { transform: scale(0.97); }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+}
+.practice-pill, .sidebar-practice-btn { transition: all 0.2s var(--ease-out); }
+.practice-pill:hover, .sidebar-practice-btn:hover { transform: translateY(-1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .question-strip { scroll-behavior: auto; }
+}
+
+/* ============================================================
+   LIQUID GLASS accents — frosted surfaces, specular edges
+   (blur only on sparse floating layers; never on long lists)
+   ============================================================ */
+.landing-card {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow: 0 8px 32px rgba(108,79,244,0.12), inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.landing-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0) 45%);
+  pointer-events: none;
+}
+[data-theme="dark"] .landing-card {
+  background: rgba(25,25,55,0.55);
+  border-color: rgba(255,255,255,0.12);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+[data-theme="dark"] .landing-card::before {
+  background: linear-gradient(115deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 45%);
+}
+
+/* Frosted floating layers */
+.md-menu {
+  background: var(--card);
+  background: color-mix(in srgb, var(--card) 78%, transparent);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  border: 1px solid rgba(128,128,160,0.25);
+}
+.mobile-top {
+  background: var(--card);
+  background: color-mix(in srgb, var(--card) 82%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+.toast {
+  background: rgba(20,20,38,0.72);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.response-question {
+  background: var(--card);
+  background: color-mix(in srgb, var(--card) 88%, transparent);
+  border: 1px solid rgba(128,128,160,0.2);
+  border-left: 4px solid var(--purple);
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+[data-theme="dark"] .response-question {
+  box-shadow: var(--shadow-md), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.custom-input-wrap {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), var(--shadow);
+}
+[data-theme="dark"] .custom-input-wrap {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), var(--shadow);
+}
+
+/* Glassy edge on strip cards (no blur — keeps 500-card scroll cheap) */
+.strip-card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), var(--shadow);
+}
+[data-theme="dark"] .strip-card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.07), var(--shadow);
+}
+
+/* Gloss sheen on primary buttons */
+.custom-input-wrap .submit-btn, .btn-primary { position: relative; overflow: hidden; }
+.custom-input-wrap .submit-btn::after, .btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 50%);
+  pointer-events: none;
+}
 </style>
 </head>
 <body>
@@ -1665,6 +1892,13 @@ const SYSTEM_PROMPTS = {
   ai2: "You are answering a medical exam question. Focus on helping the student remember the key fact. Use simple language and a memorable framing where helpful. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**.",
   ai3: "You are answering a medical exam question. Highlight what students commonly get wrong about this topic and correct those misconceptions. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**.",
   ai4: "You are answering a medical exam question. Explain like a teacher preparing a student for an MCQ exam. Focus on the single most important exam fact. Begin with a direct one-sentence answer. Keep the full response to 4-6 sentences. Format key terms in **bold**."
+};
+
+const MODEL_PERSP = {
+  ai1: "Pathophysiology",
+  ai2: "Memory framing",
+  ai3: "Misconceptions",
+  ai4: "MCQ exam fact"
 };
 
 const ANSWER_ENDPOINT = '/api/answer';
@@ -2277,6 +2511,7 @@ function renderCard() {
         <div class="acs-header-left">
           <span class="acs-dot" style="background:${model.color}"></span>
           <span class="acs-label" style="color:${model.color}">${model.label}</span>
+          <span class="acs-persp" style="color:${model.color};background:${model.color}1f">${MODEL_PERSP[model.id] || ''}</span>
         </div>
         <div class="acs-header-right">
           <span class="acs-tokens">${model.name}</span>
@@ -2470,34 +2705,28 @@ function renderStrip() {
   const all = getFilteredQuestions();
   const input = document.getElementById('stripSearch');
   const query = input ? input.value.trim().toLowerCase() : '';
-  let filtered = all.filter((q, i) => {
-    if (!query) return true;
-    const numMatch = /^\d+$/.test(query) && ('q' + (i + 1)).includes(query);
-    const textMatch = q.text.toLowerCase().includes(query);
-    return numMatch || textMatch;
-  });
-  if (AppState.showBookmarked) {
-    filtered = filtered.filter(q => isBookmarked(q));
-  }
+  const numericQuery = query && /^\d+$/.test(query);
+  const bks = getBookmarks();
+  const showBm = AppState.showBookmarked;
   if (all.length === 0) {
     strip.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><h3>No questions</h3><p>Select a subject to view questions.</p></div>';
     return;
   }
-  if (filtered.length === 0) {
-    const msg = AppState.showBookmarked
-      ? '<div class="empty-state"><div class="empty-icon">☆</div><h3>No bookmarked questions</h3><p>Click the star on a question to bookmark it.</p></div>'
-      : '<div class="empty-state"><div class="empty-icon">🔍</div><h3>No matches</h3><p>Try a different search term.</p></div>';
-    strip.innerHTML = msg;
-    return;
-  }
   const countEl = document.getElementById('qshCount');
   const subjColor = AppState.activeSubject ? getSubjectColor(AppState.activeSubject.subject) : '#6C4FF4';
-  if (countEl) countEl.textContent = filtered.length === all.length ? `${all.length} questions` : `${filtered.length} / ${all.length}`;
-  strip.innerHTML = filtered.map((q, i) => {
-    const origIdx = all.indexOf(q);
-    const bm = isBookmarked(q);
+  let html = '';
+  let shown = 0;
+  for (let origIdx = 0; origIdx < all.length; origIdx++) {
+    const q = all[origIdx];
+    if (query) {
+      const numMatch = numericQuery && ('q' + (origIdx + 1)).includes(query);
+      if (!numMatch && q.text.toLowerCase().indexOf(query) < 0) continue;
+    }
     const bmKey = getBookmarkKey(q);
-    return `
+    const bm = bks.indexOf(bmKey) >= 0;
+    if (showBm && !bm) continue;
+    shown++;
+    html += `
     <div class="strip-card ${AppState.activeQuestion === q ? 'active' : ''}" onclick="selectQuestion(${origIdx})">
       <div class="sq-color-bar" style="background:${subjColor}"></div>
       <div class="sq-top">
@@ -2506,7 +2735,16 @@ function renderStrip() {
       </div>
       <div class="sq-text">${escapeHtml(truncate(q.text, 60))}</div>
     </div>`;
-  }).join('');
+  }
+  if (shown === 0) {
+    const msg = showBm
+      ? '<div class="empty-state"><div class="empty-icon">☆</div><h3>No bookmarked questions</h3><p>Click the star on a question to bookmark it.</p></div>'
+      : '<div class="empty-state"><div class="empty-icon">🔍</div><h3>No matches</h3><p>Try a different search term.</p></div>';
+    strip.innerHTML = msg;
+    return;
+  }
+  if (countEl) countEl.textContent = shown === all.length ? `${all.length} questions` : `${shown} / ${all.length}`;
+  strip.innerHTML = html;
 }
 
 const debounceStripSearch = debounce(() => renderStrip(), 120);
